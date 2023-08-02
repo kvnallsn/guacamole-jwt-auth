@@ -56,7 +56,7 @@ jobs:
         GUACAMOLE_VERSION: ${{ matrix.version }}
 
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package -Djar.finalName=guacamole-${{ matrix.version }}-auth-jwt-${{ github.ref_name}} --file pom.xml
 
     - name: Upload Artifacts
       uses: actions/upload-artifact@v3
