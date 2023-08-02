@@ -7,7 +7,7 @@
     <groupId>org.apache.guacamole</groupId>
     <artifactId>guacamole-auth-jwt</artifactId>
     <packaging>jar</packaging>
-    <version>1.0.0</version>
+    <version>1.0.1</version>
     <name>guacamole-auth-jwt</name>
 
     <properties>
@@ -54,7 +54,7 @@
         <dependency>
             <groupId>org.apache.guacamole</groupId>
             <artifactId>guacamole-ext</artifactId>
-            <version>1.5.2</version> <!-- GUACAMOLE_VERSION -->
+            <version>1.5.3</version> <!-- GUACAMOLE_VERSION -->
             <scope>provided</scope>
         </dependency>
 

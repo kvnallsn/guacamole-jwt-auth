@@ -979,6 +979,19 @@ associate_json() {
     # Add required .jar files to GUACAMOLE_EXT
     ln -s /opt/guacamole/json/guacamole-auth-*.jar "$GUACAMOLE_EXT"
 }
+
+##  
+## Adds properties to guacamole.properties which configure the recording
+## storage extension.
+##  
+associate_recordings() {
+    # Update config file
+    set_property "recording-search-path" "$RECORDING_SEARCH_PATH"
+    
+    # Add required .jar files to GUACAMOLE_EXT
+    ln -s /opt/guacamole/recordings/guacamole-history-recording-storage-*.jar "$GUACAMOLE_EXT"
+}
+
 ##
 ## Sets up Tomcat's remote IP valve that allows gathering the remote IP
 ## from headers set by a remote proxy
@@ -1203,10 +1216,15 @@ if [ -n "$JSON_SECRET_KEY" ]; then
     INSTALLED_AUTH="$INSTALLED_AUTH json"
 fi
 
-# Use Cloudflare Access if specified.
+# Use JWT Auth if specified.
 if [ -n "$JWT_HEADER" ]; then
     associate_jwt
     INSTALLED_AUTH="$INSTALLED_AUTH jwt"
+fi
+
+# Add in the history recording storage extension if configured
+if [ -n "$RECORDING_SEARCH_PATH" ]; then
+    associate_recordings
 fi
 
 #
