@@ -1,5 +1,5 @@
 {
-    "guacamoleVersion": "1.5.2",
+    "guacamoleVersion": "1.5.3",
     "name": "JWT Auth Extension",
     "namespace": "jwt",
     "authProviders": [

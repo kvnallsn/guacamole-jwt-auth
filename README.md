@@ -45,13 +45,13 @@ The environment variable names are the same as above, except in upper case and t
 ## Running
 
 ### Native
-1. Download plugin corresponding to your Gaucamole version (i.e. `1.5.2`)
+1. Download plugin corresponding to your Gaucamole version (i.e. `1.5.3`)
 2. Place the plugin in your `$GUACAMOLE_HOME/extensions` directory and it will be automatically loaded when Guacamole starts
 3. Configure your `$GUACAMOLE_HOME/guacamole.properties` file (or environment) as specified above
 4. Start Guacamole
 
 ### Docker
-A prebuilt docker image (`ghcr.io/kvnallsn/guacamole-jwt-auth`) is available from this repository.  Simply pull the image and use as you would the regular Guacamole docker image.  The tags correspond to the plugin version matched to a Guacamole version.  Currently, builds are generated for Guacamole versions: `1.5.0`, `1.5.1`, `1.5.2`.
+A prebuilt docker image (`ghcr.io/kvnallsn/guacamole-jwt-auth`) is available from this repository.  Simply pull the image and use as you would the regular Guacamole docker image.  The tags correspond to the plugin version matched to a Guacamole version.  Currently, builds are generated for Guacamole versions: `1.5.0`, `1.5.1`, `1.5.2`, `1.5.3`.
 
 #### Example Docker Compose
 
@@ -61,7 +61,7 @@ The below `docker-compose.yml` makes the following assumptions:
 ```yaml
 services:
     guacd:
-        image: guacamole/guacd:1.5.2
+        image: guacamole/guacd:1.5.3
         restart: always
 
     postgres:
@@ -73,7 +73,7 @@ services:
             POSTGRES_PASSWORD: password
 
     guacamole:
-        image: ghcr.io/kvnallsn/guacamole-jwt-auth:v1.0.0-guac-1.5.2
+        image: ghcr.io/kvnallsn/guacamole-jwt-auth:v1.0.1-guac-1.5.3
         restart: always
         environment:
             POSTGRESQL_DATABASE: guacd
