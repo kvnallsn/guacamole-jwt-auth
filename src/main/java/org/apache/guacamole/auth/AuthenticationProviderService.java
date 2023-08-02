@@ -52,22 +52,24 @@ public class AuthenticationProviderService {
         String header = confService.getJwtHeader();
         String cookie = confService.getJwtCookie();
 
+        // first try the header (if a value was set)
         if (header != null) {
             authToken = req.getHeader(confService.getJwtHeader());
-        } else if (cookie != null) {
+        }
+
+        // if we didn't find the header (or didn't look) try to get via the cookie
+        if (authToken == null && cookie != null) {
             Cookie[] cookies = req.getCookies();
             for (int i = 0; i < cookies.length; i++) {
-                if (cookies[i].getName().equals(confService.getJwtHeader())) {
+                if (cookies[i].getName().equals(cookie)) {
                     authToken = cookies[i].getValue();
                     break;
                 }
             }
-        } else {
-            throw new GuacamoleException("missing properties jwt-header or jwt-cookie");
         }
 
         if (authToken == null) {
-            throw new GuacamoleInvalidCredentialsException("JWT Missing (bad header?)",
+            throw new GuacamoleInvalidCredentialsException("JWT Not Found(bad header or cookie?)",
                     CredentialsInfo.EMPTY);
         }
 
