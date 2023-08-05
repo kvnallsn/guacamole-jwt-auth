@@ -73,7 +73,7 @@ services:
             POSTGRES_PASSWORD: password
 
     guacamole:
-        image: ghcr.io/kvnallsn/guacamole-jwt-auth:v1.0.2-guac-1.5.3
+        image: ghcr.io/kvnallsn/guacamole-jwt-auth:latest
         restart: always
         environment:
             POSTGRESQL_DATABASE: guacd

@@ -48,40 +48,6 @@ jobs:
         name: ${{ github.ref_name }}-${{ matrix.version }}
         path: target/*.jar
 
-  docker:
-    runs-on: ubuntu-latest
-
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-    - name: Checkout Code
-      uses: actions/checkout@v3
-
-    - name: Login to the Container Registry
-      uses: docker/login-action@v2
-      with:
-        registry: ${{ env.REGISTRY }}
-        username: ${{ github.actor }}
-        password: ${{ secrets.GITHUB_TOKEN }}
-        
-    - name: Extract metadata (tags, labels) for Docker
-      id: meta
-      uses: docker/metadata-action@v4
-      with:
-        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-        flavor: |
-          suffix=-guac${{ env.LATEST }}
-
-    - name: Build and push Docker Image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        push: true
-        tags: ${{ steps.meta.outputs.tags }}
-        labels: ${{ steps.meta.outputs.labels }}
-
   publish:
     runs-on: ubuntu-latest
     needs: build
