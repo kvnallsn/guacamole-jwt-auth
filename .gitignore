@@ -4,6 +4,9 @@ scripts/test.sh
 # ignore target/build dir
 target/
 
+# ignore vscode settings
+.vscode/
+
 ### Maven ###
 target/
 pom.xml.tag
