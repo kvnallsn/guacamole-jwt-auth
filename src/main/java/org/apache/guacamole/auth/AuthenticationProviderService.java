@@ -3,10 +3,7 @@ package org.apache.guacamole.auth;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
-
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.math.BigInteger;
 import java.net.URISyntaxException;
@@ -23,6 +20,9 @@ import org.apache.guacamole.GuacamoleException;
 import org.apache.guacamole.net.auth.Credentials;
 import org.apache.guacamole.net.auth.credentials.CredentialsInfo;
 import org.apache.guacamole.net.auth.credentials.GuacamoleInvalidCredentialsException;
+import org.apache.hc.client5.http.classic.HttpClient;
+import org.apache.hc.client5.http.classic.methods.HttpGet;
+import org.apache.hc.core5.http.HttpEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -45,7 +45,7 @@ public class AuthenticationProviderService {
     @Inject
     private Provider<JwtUser> authenticatedUserProvider;
 
-    public JwtUser authenticateUser(Credentials credentials) throws GuacamoleException {
+    public JwtUser authenticateUser(Credentials credentials, HttpClient client) throws GuacamoleException {
         HttpServletRequest req = credentials.getRequest();
 
         String authToken = null;
@@ -78,7 +78,7 @@ public class AuthenticationProviderService {
             DecodedJWT token = JWT.decode(authToken);
 
             // fetch cert
-            RSAPublicKey publicKey = getJwksKeys(token.getKeyId());
+            RSAPublicKey publicKey = getJwksKeys(token.getKeyId(), client);
 
             // validate token
             Algorithm algo = Algorithm.RSA256(publicKey, null);
@@ -99,26 +99,21 @@ public class AuthenticationProviderService {
         }
     }
 
-    private RSAPublicKey getJwksKeys(String keyId)
+    private RSAPublicKey getJwksKeys(String keyId, HttpClient client)
             throws URISyntaxException, IOException, InterruptedException, Exception {
-        OkHttpClient client = new OkHttpClient();
 
-        Request req = new Request.Builder()
-                .url(confService.getJwtJwksUrl())
-                .build();
-
-        Response resp = client.newCall(req).execute();
-        if (!resp.isSuccessful()) {
-            throw new Exception("failed to fetch json web keys (http error)");
-        }
+        HttpGet req = new HttpGet(confService.getJwtJwksUrl());
+        String payload = client.execute(req, response -> {
+            HttpEntity entity = response.getEntity();
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            entity.writeTo(os);
+            return os.toString();
+        });
 
         // Extract the keys array using a JSONPointer query/path (if provided)
         JSONArray arr;
-        String payload = resp.body().string();
-        String keyPath = confService.getJwtJwksPath();
-
         JSONObject obj = new JSONObject(payload);
-        Object arrObj = obj.query(keyPath);
+        Object arrObj = obj.query(confService.getJwtJwksPath());
         if (arrObj != null && arrObj instanceof JSONArray) {
             arr = (JSONArray) arrObj;
         } else {
