@@ -930,7 +930,7 @@ END
 ## Access authentication provider.
 ##
 associate_jwt() {
-    if [ -z "$JWT_HEADER" -o -z "$JWT_COOKIE" ] || \
+    if [ -z "$JWT_HEADER" -a -z "$JWT_COOKIE" ] || \
        [ -z "$JWT_JWKS_URL" ] || \
        [ -z "$JWT_AUDIENCE" ]
     then
